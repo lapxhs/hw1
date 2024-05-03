@@ -112,10 +112,10 @@
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
 -- TODO!
-DROP TABLE IF EXISTS MovieActors;
-DROP TABLE IF EXISTS Actors;
-DROP TABLE IF EXISTS Studios;
-DROP TABLE IF EXISTS Movies;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS studios;
+DROP TABLE IF EXISTS movies;
 
 -- Create new tables, according to your domain model
 -- TODO!
@@ -139,25 +139,23 @@ CREATE TABLE Actors (
     name TEXT
 );
 
-CREATE TABLE MovieActors (
-    movie_id INTEGER,
+CREATE TABLE roles (
+   movie_id INTEGER,
     actor_id INTEGER,
-    character_name TEXT,
-    PRIMARY KEY (movie_id, actor_id),
-    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id),
-    FOREIGN KEY (actor_id) REFERENCES Actors(actor_id)
+    character_name TEXT
 );
+    
 
 -- Insert data into your database that reflects the sample data shown above
-INSERT INTO Studios (studio_id, name) VALUES 
+INSERT INTO studios (studio_id, name) VALUES 
     (1, 'Warner Bros.');
 
-INSERT INTO Movies (movie_id, title, year_released, mpaa_rating, studio_id) VALUES 
+INSERT INTO movies (movie_id, title, year_released, mpaa_rating, studio_id) VALUES 
     (1, 'Batman Begins', 2005, 'PG-13', 1),
     (2, 'The Dark Knight', 2008, 'PG-13', 1),
     (3, 'The Dark Knight Rises', 2012, 'PG-13', 1);
 
-INSERT INTO Actors (actor_id, name) VALUES
+INSERT INTO actors (actor_id, name) VALUES
     (1, 'Christian Bale'),
     (2, 'Michael Caine'),
     (3, 'Liam Neeson'),
@@ -170,19 +168,21 @@ INSERT INTO Actors (actor_id, name) VALUES
     (10, 'Joseph Gordon-Levitt'),
     (11, 'Anne Hathaway');
 
-INSERT INTO MovieActors (movie_id, actor_id, character_name) VALUES
+INSERT INTO roles (movie_id, actor_id, character_name) VALUES
     -- Batman Begins
     (1, 1, 'Bruce Wayne'),
     (1, 2, 'Alfred'),
     (1, 3, 'Ra''s Al Ghul'),
     (1, 4, 'Rachel Dawes'),
     (1, 5, 'Commissioner Gordon'),
+    INSERT INTO roles (movie_id, actor_id, character_name) VALUES
     -- The Dark Knight
     (2, 1, 'Bruce Wayne'),
     (2, 6, 'Joker'),
     (2, 7, 'Harvey Dent'),
     (2, 2, 'Alfred'),
     (2, 8, 'Rachel Dawes'),
+    INSERT INTO roles (movie_id, actor_id, character_name) VALUES
     -- The Dark Knight Rises
     (3, 1, 'Bruce Wayne'),
     (3, 5, 'Commissioner Gordon'),
@@ -214,9 +214,10 @@ JOIN Studios ON Movies.studio_id = Studios.studio_id;
 -- The SQL statement for the cast output
 -- TODO!
 -- SQL statement for cast output
-SELECT Movies.title, Actors.name AS actor_name, MovieActors.character_name
-FROM Movies
-JOIN MovieActors ON Movies.movie_id = MovieActors.movie_id
-JOIN Actors ON MovieActors.actor_id = Actors.actor_id;
+SELECT movies.title, actors.actor_name, roles.character_name
+FROM movies INNER JOIN actors INNER JOIN roles
+ON movies.movie_id = roles.movie_id and
+actors.actor_id = roles.actor_id
+Order by movies.title;
 
 
